@@ -275,24 +275,27 @@
     </section>
 
     <script>
-      const scriptURL =
-        "https://script.google.com/macros/s/AKfycby8yw1mLgm1G4FHa8zAIta-ZNqd2JWvWlhl0QtmR_yVTcyMITGhUpYNq1iwwvxXvXwy7A/exec";
+      const scriptURL = "https://script.google.com/macros/s/AKfycby8yw1mLgm1G4FHa8zAIta-ZNqd2JWvWlhl0QtmR_yVTcyMITGhUpYNq1iwwvxXvXwy7A/exec";
       const form = document.forms["submit-to-google-sheet"];
       const success = document.getElementById("success");
-
+  
       form.addEventListener("submit", (e) => {
-        e.preventDefault();
-        fetch(scriptURL, { method: "POST", body: new FormData(form) })
-          .then((response) => {
-            success.innerHTML = "Data Successfully Submited";
-
-            setTimeout(function () {
-              success.innerHTML = "";
-            }, 2000);
-            form.reset();
-          })
-          .catch((error) => console.error("Error!", error.message));
+          e.preventDefault();
+          fetch(scriptURL, { method: "POST", body: new FormData(form) })
+              .then((response) => response.json())
+              .then((data) => {
+                  if (data.success) {
+                      window.location.href = "success.html"; // Redirect to success page
+                  } else {
+                      throw new Error(data.error);
+                  }
+              })
+              .catch((error) => {
+                  console.error("Error!", error.message);
+                  window.location.href = "failure.html"; // Redirect to error page
+              });
       });
-    </script>
+  </script>
+  
   </body>
 </html>
